@@ -1,0 +1,14 @@
+.confirm-dialog__message {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.confirm-dialog__message strong {
+  color: var(--text-primary);
+}
+
+.confirm-dialog--destructive .confirm-dialog__message strong {
+  color: var(--status-danger);
+}

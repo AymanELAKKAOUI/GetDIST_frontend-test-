@@ -1,0 +1,25 @@
+.user-name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.user-email {
+  color: var(--text-secondary);
+}
+
+.user-roles-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.user-role-pill {
+  display: inline-flex;
+  align-items: center;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+}

@@ -1,0 +1,120 @@
+.suppliers-toolbar {
+  align-items: center;
+}
+
+.suppliers-toolbar__filters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.suppliers-status-filter {
+  width: auto;
+  min-width: 180px;
+}
+
+.supplier-name-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.supplier-name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.supplier-legal-name {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.supplier-contact-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.supplier-contact-name {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.supplier-contact-detail {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.supplier-status {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.supplier-status--draft {
+  background: var(--border-input);
+  color: var(--text-secondary);
+}
+
+.supplier-status--pending_validation {
+  background: var(--status-inactive-bg);
+  color: var(--status-inactive);
+}
+
+.supplier-status--active {
+  background: var(--status-active-bg);
+  color: var(--status-active);
+}
+
+.supplier-status--suspended,
+.supplier-status--inactive {
+  background: var(--status-danger-bg);
+  color: var(--status-danger);
+}
+
+.supplier-meta-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.supplier-meta-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.supplier-meta-pill--strategic {
+  background: var(--status-active-bg);
+  color: var(--status-active);
+}
+
+.supplier-meta-pill--alt {
+  background: var(--permission-pill-bg);
+  color: var(--permission-pill-text);
+}
+
+.supplier-meta-pill--sole {
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+}
+
+.supplier-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.btn--sm {
+  padding: 6px 12px;
+  font-size: 12px;
+}

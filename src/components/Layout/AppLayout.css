@@ -1,0 +1,5 @@
+.app-layout__main {
+  margin-left: var(--sidebar-width);
+  padding: 32px 40px;
+  min-height: 100vh;
+}
