@@ -1,0 +1,62 @@
+.modal--portal-users .modal__body {
+  padding-top: 8px;
+}
+
+.portal-users-modal__subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: -4px 0 20px;
+  line-height: 1.5;
+}
+
+.portal-users-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.portal-users-table {
+  font-size: 15px;
+}
+
+.portal-users-table th {
+  font-size: 12px;
+  padding: 12px 16px;
+}
+
+.portal-users-table td {
+  vertical-align: middle;
+  padding: 14px 16px;
+}
+
+.portal-users-table td:first-child {
+  min-width: 160px;
+  font-weight: 500;
+}
+
+.portal-users-table td:nth-child(2) {
+  min-width: 220px;
+}
+
+.portal-users-empty {
+  text-align: center;
+  padding: 40px 24px;
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+
+.portal-users-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.portal-users-actions .btn--icon {
+  padding: 10px;
+}
+
+.portal-users-actions .btn--icon svg {
+  width: 18px;
+  height: 18px;
+}

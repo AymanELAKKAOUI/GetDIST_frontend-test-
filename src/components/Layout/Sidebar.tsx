@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Building2, ChevronUp, Home, LogOut, Shield, UserCircle, Users } from 'lucide-react';
+import { Building2, ChevronUp, ClipboardList, Home, LogOut, Package, Shield, UserCircle, Users } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import './Sidebar.css';
 
@@ -24,6 +24,12 @@ export function Sidebar() {
   const showSuppliers =
     !isSupplierPortalUser &&
     hasAnyPermission(['supplier.view', 'supplier.manage']);
+  const showPurchaseOrders = hasAnyPermission([
+    'purchase_order.view',
+    'purchase_order.manage',
+    'purchase_order.respond',
+  ]);
+  const showDeliveryNotes = hasPermission('delivery_note.view');
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -90,6 +96,26 @@ export function Sidebar() {
           >
             <Building2 size={18} />
             <span>Suppliers</span>
+          </NavLink>
+        )}
+        {showPurchaseOrders && (
+          <NavLink
+            to="/purchase-orders"
+            className={({ isActive }) => `sidebar__item ${isActive ? 'sidebar__item--active' : ''}`}
+            id="nav-purchase-orders"
+          >
+            <Package size={18} />
+            <span>Purchase Orders</span>
+          </NavLink>
+        )}
+        {showDeliveryNotes && (
+          <NavLink
+            to="/delivery-notes"
+            className={({ isActive }) => `sidebar__item ${isActive ? 'sidebar__item--active' : ''}`}
+            id="nav-delivery-notes"
+          >
+            <ClipboardList size={18} />
+            <span>Delivery Notes</span>
           </NavLink>
         )}
       </nav>

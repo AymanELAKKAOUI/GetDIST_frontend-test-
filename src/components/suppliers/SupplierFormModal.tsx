@@ -39,6 +39,20 @@ export function SupplierFormModal({ isOpen, supplier, onClose, onSuccess }: Supp
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (values.allowsPartialPayment && values.requiresFullPayment) {
+      setError(
+        'Partial payment and full payment cannot both be enabled. Uncheck one of these options.',
+      );
+      return;
+    }
+
+    const email = values.email.trim();
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+
     setSubmitting(true);
 
     const payload = formValuesToPayload(values);
@@ -356,7 +370,14 @@ export function SupplierFormModal({ isOpen, supplier, onClose, onSuccess }: Supp
                     type="checkbox"
                     id="supplier-partial-payment"
                     checked={values.allowsPartialPayment}
-                    onChange={(e) => setField('allowsPartialPayment', e.target.checked)}
+                    onChange={(e) => {
+                      const checked = e.target.checked;
+                      setValues((prev) => ({
+                        ...prev,
+                        allowsPartialPayment: checked,
+                        requiresFullPayment: checked ? false : prev.requiresFullPayment,
+                      }));
+                    }}
                   />
                   Allows Partial Payment
                 </label>
@@ -365,7 +386,14 @@ export function SupplierFormModal({ isOpen, supplier, onClose, onSuccess }: Supp
                     type="checkbox"
                     id="supplier-full-payment"
                     checked={values.requiresFullPayment}
-                    onChange={(e) => setField('requiresFullPayment', e.target.checked)}
+                    onChange={(e) => {
+                      const checked = e.target.checked;
+                      setValues((prev) => ({
+                        ...prev,
+                        requiresFullPayment: checked,
+                        allowsPartialPayment: checked ? false : prev.allowsPartialPayment,
+                      }));
+                    }}
                   />
                   Requires Full Payment
                 </label>

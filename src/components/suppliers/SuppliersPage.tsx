@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
-import { Key, Pencil, Plus } from 'lucide-react';
+import { Pencil, Plus, Users } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { apiClient, getApiErrorMessage } from '../../api/client';
 import type { Supplier, SupplierStatus } from '../../types/supplier';
@@ -11,7 +11,7 @@ import {
 import { SearchInput } from '../ui/SearchInput';
 import { useToast } from '../ui/Toast';
 import { SupplierFormModal } from './SupplierFormModal';
-import { ProvisionPortalUserModal } from './ProvisionPortalUserModal';
+import { SupplierPortalUsersModal } from './SupplierPortalUsersModal';
 import './SuppliersPage.css';
 
 function TableSkeleton() {
@@ -43,7 +43,7 @@ export function SuppliersPage() {
   const [statusFilter, setStatusFilter] = useState<'' | SupplierStatus>('');
   const [formOpen, setFormOpen] = useState(false);
   const [editingSupplier, setEditingSupplier] = useState<Supplier | null>(null);
-  const [portalTarget, setPortalTarget] = useState<Supplier | null>(null);
+  const [portalUsersTarget, setPortalUsersTarget] = useState<Supplier | null>(null);
   const [transitioningId, setTransitioningId] = useState<string | null>(null);
 
   const fetchSuppliers = useCallback(async () => {
@@ -316,12 +316,12 @@ export function SuppliersPage() {
                             <button
                               type="button"
                               className="btn--icon"
-                              id={`provision-portal-${supplier.id}`}
-                              onClick={() => setPortalTarget(supplier)}
-                              aria-label={`Provision portal user for ${supplier.name}`}
-                              title="Provision Portal User"
+                              id={`portal-users-${supplier.id}`}
+                              onClick={() => setPortalUsersTarget(supplier)}
+                              aria-label={`Manage portal users for ${supplier.name}`}
+                              title="Portal Users"
                             >
-                              <Key size={16} />
+                              <Users size={16} />
                             </button>
                           )}
                         </>
@@ -352,12 +352,11 @@ export function SuppliersPage() {
         onSuccess={handleFormSuccess}
       />
 
-      <ProvisionPortalUserModal
-        isOpen={!!portalTarget}
-        supplierId={portalTarget?.id ?? null}
-        supplierName={portalTarget?.name ?? ''}
-        onClose={() => setPortalTarget(null)}
-        onSuccess={() => showToast('Portal user created successfully.')}
+      <SupplierPortalUsersModal
+        isOpen={!!portalUsersTarget}
+        supplierId={portalUsersTarget?.id ?? null}
+        supplierName={portalUsersTarget?.name ?? ''}
+        onClose={() => setPortalUsersTarget(null)}
       />
     </div>
   );

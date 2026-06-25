@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Building2, Shield, UserCircle, Users } from 'lucide-react';
+import { Building2, ClipboardList, Package, Shield, UserCircle, Users } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import './HomePage.css';
 
@@ -43,6 +43,30 @@ export function HomePage() {
       description: 'Vendor profiles and portal accounts',
       to: '/suppliers',
       icon: <Building2 size={20} />,
+    });
+  }
+
+  if (hasAnyPermission(['purchase_order.view', 'purchase_order.manage', 'purchase_order.respond'])) {
+    links.push({
+      id: 'home-link-purchase-orders',
+      label: 'Purchase Orders',
+      description: isSupplierPortalUser
+        ? 'View and respond to client purchase orders'
+        : 'Create and manage purchase orders',
+      to: '/purchase-orders',
+      icon: <Package size={20} />,
+    });
+  }
+
+  if (hasPermission('delivery_note.view')) {
+    links.push({
+      id: 'home-link-delivery-notes',
+      label: 'Delivery Notes',
+      description: isSupplierPortalUser
+        ? 'Upload and track delivery note PDFs'
+        : 'Review and verify delivery notes',
+      to: '/delivery-notes',
+      icon: <ClipboardList size={20} />,
     });
   }
 

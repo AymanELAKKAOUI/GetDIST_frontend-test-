@@ -16,7 +16,13 @@ export interface User {
   fullName: string;
   isActive: boolean;
   createdAt: string;
+  supplierId: string | null;
+  supplierName: string | null;
   roles: Array<{ id: string; name: string }>;
+}
+
+export function isSupplierPortalUser(user: User): boolean {
+  return user.supplierId != null;
 }
 
 export function getRoleBadgeStyle(): { bg: string; color: string } {

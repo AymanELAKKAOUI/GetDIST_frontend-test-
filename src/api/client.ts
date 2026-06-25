@@ -14,6 +14,9 @@ apiClient.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  if (config.data instanceof FormData) {
+    delete config.headers['Content-Type'];
+  }
   return config;
 });
 
@@ -42,7 +45,11 @@ export interface ApiErrorBody {
 export function getApiErrorMessage(error: unknown, fallback = 'An unexpected error occurred.'): string {
   if (axios.isAxiosError(error)) {
     const data = error.response?.data as ApiErrorBody | undefined;
+    if (data?.error === 'INTERNAL_SERVER_ERROR') {
+      return 'Server error while saving. If payment options are conflicting, uncheck either partial or full payment.';
+    }
     if (data?.message) return data.message;
+    if (data?.error === 'VALIDATION_ERROR') return 'Invalid request. Check the form fields and try again.';
     if (data?.error === 'CONFLICT') return 'A role with this name already exists.';
     if (error.response?.status === 429) return 'Too many attempts. Please try again later.';
   }
