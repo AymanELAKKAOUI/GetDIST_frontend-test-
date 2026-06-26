@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Building2, ChevronUp, ClipboardList, FileText, Home, LogOut, Package, Shield, UserCircle, Users } from 'lucide-react';
+import { Building2, CalendarDays, ChevronUp, ClipboardList, CreditCard, FileText, Home, Landmark, LogOut, Package, Shield, UserCircle, Users } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import './Sidebar.css';
 
@@ -31,6 +31,8 @@ export function Sidebar() {
   ]);
   const showDeliveryNotes = hasPermission('delivery_note.view');
   const showInvoices = hasPermission('invoice.view');
+  const showPayments = hasPermission('payment.view');
+  const showChecks = hasAnyPermission(['check.view', 'check.create']);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -53,7 +55,7 @@ export function Sidebar() {
       <div className="sidebar__header">
         <div className="sidebar__logo" aria-hidden="true" />
         <div>
-          <div className="sidebar__app-name">GetDIST Control</div>
+          <div className="sidebar__app-name">FINTRAC Control</div>
           <div className="sidebar__app-subtitle">ERP Dashboard</div>
         </div>
       </div>
@@ -128,6 +130,37 @@ export function Sidebar() {
             <FileText size={18} />
             <span>Invoices</span>
           </NavLink>
+        )}
+        {showPayments && (
+          <NavLink
+            to="/payments"
+            className={({ isActive }) => `sidebar__item ${isActive ? 'sidebar__item--active' : ''}`}
+            id="nav-payments"
+          >
+            <CreditCard size={18} />
+            <span>Payments</span>
+          </NavLink>
+        )}
+        {showChecks && (
+          <>
+            <NavLink
+              to="/checks"
+              end
+              className={({ isActive }) => `sidebar__item ${isActive ? 'sidebar__item--active' : ''}`}
+              id="nav-checks"
+            >
+              <Landmark size={18} />
+              <span>Checks</span>
+            </NavLink>
+            <NavLink
+              to="/checks/calendar"
+              className={({ isActive }) => `sidebar__item ${isActive ? 'sidebar__item--active' : ''}`}
+              id="nav-check-calendar"
+            >
+              <CalendarDays size={18} />
+              <span>Calendar</span>
+            </NavLink>
+          </>
         )}
       </nav>
 

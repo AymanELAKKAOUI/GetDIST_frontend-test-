@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { apiClient } from '../../api/client';
 import { fetchInvoicePdfBlob } from '../../api/invoices';
+import { buildPaymentPrefillFromInvoice } from '../../api/invoicePayments';
 import { useAuth } from '../../context/AuthContext';
 import type { Invoice } from '../../types/invoice';
 import type { PurchaseOrder } from '../../types/purchaseOrder';
@@ -19,6 +20,7 @@ export function InvoiceReviewPage() {
   const { hasPermission } = useAuth();
 
   const canRespond = hasPermission('invoice.respond');
+  const canCreatePayment = hasPermission('payment.create');
 
   const [loading, setLoading] = useState(true);
   const [invoice, setInvoice] = useState<Invoice | null>(null);
@@ -132,7 +134,15 @@ export function InvoiceReviewPage() {
             <VerifyInvoiceForm
               invoice={invoice}
               purchaseOrderTotal={purchaseOrderTotal}
-              onSuccess={() => navigate('/invoices')}
+              onSuccess={(verifiedInvoice) => {
+                if (canCreatePayment) {
+                  navigate('/payments/new', {
+                    state: { fromInvoice: buildPaymentPrefillFromInvoice(verifiedInvoice) },
+                  });
+                } else {
+                  navigate('/invoices');
+                }
+              }}
             />
           )}
         </div>

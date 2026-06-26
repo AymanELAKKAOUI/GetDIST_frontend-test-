@@ -34,6 +34,16 @@ import { InvoicesPage } from './components/invoices/InvoicesPage';
 
 import { InvoiceReviewPage } from './components/invoices/InvoiceReviewPage';
 
+import { PaymentsPage } from './components/payments/PaymentsPage';
+
+import { CreatePaymentPage } from './components/payments/CreatePaymentPage';
+
+import { PaymentDetailPage } from './components/payments/PaymentDetailPage';
+
+import { ChecksPage } from './components/checks/ChecksPage';
+
+import { CheckCalendarPage } from './components/checks/CheckCalendarPage';
+
 import './App.css';
 
 
@@ -127,6 +137,28 @@ export default function App() {
                 <Route element={<PermissionRoute requiredPermissions="invoice.respond" />}>
 
                   <Route path="/invoices/:id" element={<InvoiceReviewPage />} />
+
+                </Route>
+
+                <Route element={<PermissionRoute requiredPermissions="payment.view" />}>
+
+                  <Route path="/payments" element={<PaymentsPage />} />
+
+                  <Route path="/payments/:id" element={<PaymentDetailPage />} />
+
+                </Route>
+
+                <Route element={<PermissionRoute requiredPermissions="payment.create" />}>
+
+                  <Route path="/payments/new" element={<CreatePaymentPage />} />
+
+                </Route>
+
+                <Route element={<PermissionRoute requiredPermissions={['check.view', 'check.create']} />}>
+
+                  <Route path="/checks" element={<ChecksPage />} />
+
+                  <Route path="/checks/calendar" element={<CheckCalendarPage />} />
 
                 </Route>
 

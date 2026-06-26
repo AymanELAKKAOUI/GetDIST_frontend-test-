@@ -54,3 +54,41 @@
   color: var(--text-secondary);
   line-height: 1.4;
 }
+
+.home-supplier-total {
+  margin-top: 32px;
+  max-width: 480px;
+  padding: 28px 32px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+}
+
+.home-supplier-total--loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+}
+
+.home-supplier-total__label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.home-supplier-total__value {
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1.1;
+}
+
+.home-supplier-total__meta {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}

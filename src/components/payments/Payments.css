@@ -1,0 +1,229 @@
+.pay-policy-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 20px 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+}
+
+.pay-policy-panel__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.pay-policy-panel__label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.pay-policy-panel__hint {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.pay-policy-panel__value {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1.1;
+}
+
+.pay-policy-panel__empty {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.pay-policy-panel__edit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.pay-policy-panel__input {
+  max-width: 180px;
+}
+
+.pay-policy-panel__currency {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.pay-method-badge,
+.pay-status-badge,
+.check-status-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.pay-method-badge--check {
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+}
+
+.pay-method-badge--cash {
+  background: rgba(20, 184, 166, 0.15);
+  color: #2dd4bf;
+}
+
+.pay-status-badge--draft {
+  background: rgba(100, 116, 139, 0.2);
+  color: #94a3b8;
+}
+
+.pay-status-badge--pending {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+}
+
+.pay-status-badge--scheduled {
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+}
+
+.pay-status-badge--paid {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+
+.pay-status-badge--cancelled {
+  background: rgba(71, 85, 105, 0.25);
+  color: #94a3b8;
+}
+
+.check-status-badge--planned {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+}
+
+.check-status-badge--issued {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+}
+
+.check-status-badge--received {
+  background: rgba(234, 179, 8, 0.15);
+  color: #facc15;
+}
+
+.check-status-badge--cleared {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+
+.check-status-badge--cancelled {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+}
+
+.pay-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.pay-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+
+.pay-panel__title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.pay-approval-card {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin-bottom: 12px;
+  background: var(--bg-panel);
+}
+
+.pay-approval-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.pay-approval-card__type {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pay-approval-warning {
+  font-size: 13px;
+  color: #fcd34d;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+
+.pay-actions-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-soft);
+}
+
+.pay-form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pay-form-row {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.pay-form-row__label {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.pay-form-row--stacked {
+  grid-template-columns: 1fr;
+  gap: 6px;
+}
+
+@media (max-width: 900px) {
+  .pay-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pay-form-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}

@@ -1,8 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Download, Eye, Info, RefreshCw } from 'lucide-react';
+import { Download, Eye, Info, CreditCard, RefreshCw } from 'lucide-react';
 import { apiClient } from '../../api/client';
 import { approveInvoice, downloadInvoicePdf } from '../../api/invoices';
+import {
+  buildPaymentPrefillFromInvoice,
+  canCreatePaymentForInvoice,
+  findLatestPaymentForInvoice,
+} from '../../api/invoicePayments';
 import { useAuth } from '../../context/AuthContext';
 import type { DeliveryNote } from '../../types/deliveryNote';
 import {
@@ -14,6 +19,7 @@ import {
   type InvoiceStatus,
 } from '../../types/invoice';
 import type { PurchaseOrder } from '../../types/purchaseOrder';
+import { fetchAllPayments, type Payment } from '../../types/payment';
 import type { Supplier } from '../../types/supplier';
 import { useToast } from '../ui/Toast';
 import { InvoiceDetailModal } from './InvoiceDetailModal';
@@ -71,9 +77,11 @@ export function InvoicesPage() {
 
   const canView = hasPermission('invoice.view');
   const canRespond = hasPermission('invoice.respond') && !isSupplierPortalUser;
+  const canCreatePayment = !isSupplierPortalUser && hasPermission('payment.create');
 
   const [loading, setLoading] = useState(true);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [payments, setPayments] = useState<Payment[]>([]);
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [deliveryNotes, setDeliveryNotes] = useState<DeliveryNote[]>([]);
   const [purchaseOrders, setPurchaseOrders] = useState<PurchaseOrder[]>([]);
@@ -126,6 +134,16 @@ export function InvoicesPage() {
             .get<{ suppliers: Supplier[] }>('/api/suppliers')
             .then(({ data }) => setSuppliers(data.suppliers)),
         );
+        if (hasPermission('payment.view')) {
+          tasks.push(
+            fetchAllPayments(async (offset, limit) => {
+              const { data } = await apiClient.get<{ payments: Payment[] }>('/api/payments', {
+                params: { limit, offset },
+              });
+              return data.payments;
+            }).then(setPayments),
+          );
+        }
       }
 
       await Promise.all(tasks);
@@ -134,7 +152,7 @@ export function InvoicesPage() {
     } finally {
       setLoading(false);
     }
-  }, [canView, isSupplierPortalUser, showToast]);
+  }, [canView, isSupplierPortalUser, showToast, hasPermission]);
 
   useEffect(() => {
     fetchData();
@@ -255,6 +273,14 @@ export function InvoicesPage() {
       setApproving(false);
     }
   };
+
+  const navigateToPayInvoice = (invoice: Invoice) => {
+    navigate('/payments/new', { state: { fromInvoice: buildPaymentPrefillFromInvoice(invoice) } });
+  };
+
+  const linkedPaymentForDetail = detailInvoice
+    ? findLatestPaymentForInvoice(detailInvoice.id, payments)
+    : null;
 
   const dateSent = (invoice: Invoice) =>
     formatDateTimeDisplay(invoice.createdAt ?? invoice.invoiceDate);
@@ -481,14 +507,29 @@ export function InvoicesPage() {
                     <InvoiceStatusBadge status={invoice.status} />
                   </td>
                   <td onClick={(e) => e.stopPropagation()}>
-                    <button
-                      type="button"
-                      className="btn btn--ghost btn--sm"
-                      onClick={(e) => handleDownload(invoice, e)}
-                    >
-                      <Download size={14} />
-                      PDF
-                    </button>
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                      <button
+                        type="button"
+                        className="btn btn--ghost btn--sm"
+                        onClick={(e) => handleDownload(invoice, e)}
+                      >
+                        <Download size={14} />
+                        PDF
+                      </button>
+                      {canCreatePayment && canCreatePaymentForInvoice(invoice, payments) && (
+                        <button
+                          type="button"
+                          className="btn btn--sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigateToPayInvoice(invoice);
+                          }}
+                        >
+                          <CreditCard size={14} />
+                          Pay
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -517,6 +558,13 @@ export function InvoicesPage() {
         showApprove={showApproveOnDetail}
         approving={approving}
         onApprove={handleApprove}
+        linkedPayment={linkedPaymentForDetail ?? null}
+        canCreatePayment={
+          !!detailInvoice && canCreatePayment && canCreatePaymentForInvoice(detailInvoice, payments)
+        }
+        onCreatePayment={
+          detailInvoice ? () => navigateToPayInvoice(detailInvoice) : undefined
+        }
         onClose={() => {
           setDetailInvoice(null);
           setShowApproveOnDetail(false);

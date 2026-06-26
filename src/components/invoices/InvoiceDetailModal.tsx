@@ -1,10 +1,13 @@
-import { Download } from 'lucide-react';
+import { Download, CreditCard } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { downloadInvoicePdf } from '../../api/invoices';
 import {
   formatDateDisplay,
   formatMoney,
   type Invoice,
 } from '../../types/invoice';
+import type { Payment, PaymentStatus } from '../../types/payment';
+import { statusDisplayLabel as paymentStatusLabel } from '../../types/payment';
 import { Modal } from '../ui/Modal';
 import { useToast } from '../ui/Toast';
 import { InvoiceStatusBadge } from './InvoiceStatusBadge';
@@ -20,6 +23,9 @@ interface InvoiceDetailModalProps {
   showApprove?: boolean;
   approving?: boolean;
   onApprove?: () => void;
+  linkedPayment?: Payment | null;
+  canCreatePayment?: boolean;
+  onCreatePayment?: () => void;
   onClose: () => void;
 }
 
@@ -32,6 +38,9 @@ export function InvoiceDetailModal({
   showApprove = false,
   approving = false,
   onApprove,
+  linkedPayment = null,
+  canCreatePayment = false,
+  onCreatePayment,
   onClose,
 }: InvoiceDetailModalProps) {
   const { showToast } = useToast();
@@ -196,6 +205,17 @@ export function InvoiceDetailModal({
           <Download size={14} />
           Download PDF
         </button>
+        {canCreatePayment && onCreatePayment && (
+          <button type="button" className="btn btn--sm" onClick={onCreatePayment}>
+            <CreditCard size={14} />
+            Pay Invoice
+          </button>
+        )}
+        {linkedPayment && (
+          <Link to={`/payments/${linkedPayment.id}`} className="inv-sent-link" onClick={onClose}>
+            View linked payment ({paymentStatusLabel(linkedPayment.status as PaymentStatus)})
+          </Link>
+        )}
         {showApprove && onApprove && (
           <button type="button" className="btn btn--sm" onClick={onApprove} disabled={approving}>
             {approving ? 'Approving…' : 'Approve Invoice'}

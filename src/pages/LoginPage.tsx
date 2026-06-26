@@ -52,7 +52,7 @@ export function LoginPage() {
       <div className="login-card">
         <div className="login-card__brand">
           <div className="login-card__logo" aria-hidden="true" />
-          <h1 className="login-card__title">GetDIST Control</h1>
+          <h1 className="login-card__title">FINTRAC Control</h1>
           <p className="login-card__subtitle">ERP Dashboard</p>
         </div>
 

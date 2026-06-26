@@ -17,7 +17,7 @@ import './Invoices.css';
 interface VerifyInvoiceFormProps {
   invoice: Invoice;
   purchaseOrderTotal: number | null;
-  onSuccess: () => void;
+  onSuccess: (invoice: Invoice) => void;
 }
 
 export function VerifyInvoiceForm({ invoice, purchaseOrderTotal, onSuccess }: VerifyInvoiceFormProps) {
@@ -66,7 +66,7 @@ export function VerifyInvoiceForm({ invoice, purchaseOrderTotal, onSuccess }: Ve
     setError(null);
 
     try {
-      await apiClient.post(`/api/invoices/${invoice.id}/verify`, {
+      const { data } = await apiClient.post<{ invoice: Invoice }>(`/api/invoices/${invoice.id}/verify`, {
         invoiceNumber: invoiceNumber.trim(),
         invoiceDate,
         dueDate,
@@ -80,7 +80,7 @@ export function VerifyInvoiceForm({ invoice, purchaseOrderTotal, onSuccess }: Ve
         })),
       });
       showToast('Invoice verified and approved.');
-      onSuccess();
+      onSuccess(data.invoice);
     } catch (err) {
       setError(getApiErrorMessage(err, 'Failed to verify invoice.'));
     } finally {
