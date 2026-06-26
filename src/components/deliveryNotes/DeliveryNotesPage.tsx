@@ -12,10 +12,12 @@ import {
   formatDateTimeDisplay,
   type DeliveryNote,
 } from '../../types/deliveryNote';
+import type { Invoice } from '../../types/invoice';
 import { useToast } from '../ui/Toast';
 import { DeliveryNoteDetailModal } from './DeliveryNoteDetailModal';
 import { DeliveryNoteStatusBadge } from './DeliveryNoteStatusBadge';
 import { UploadDeliveryNoteModal } from './UploadDeliveryNoteModal';
+import { UploadInvoiceModal } from '../invoices/UploadInvoiceModal';
 import './DeliveryNotes.css';
 
 function TableSkeleton() {
@@ -59,6 +61,7 @@ export function DeliveryNotesPage() {
 
   const canView = hasPermission('delivery_note.view');
   const canSubmit = isSupplierPortalUser && hasPermission('delivery_note.submit');
+  const canSubmitInvoice = isSupplierPortalUser && hasPermission('invoice.submit');
   const canRespond = hasPermission('delivery_note.respond') && !isSupplierPortalUser;
 
   const [loading, setLoading] = useState(true);
@@ -67,7 +70,9 @@ export function DeliveryNotesPage() {
   const [purchaseOrders, setPurchaseOrders] = useState<PurchaseOrder[]>([]);
   const [supplierFilter, setSupplierFilter] = useState('');
   const [detailNote, setDetailNote] = useState<DeliveryNote | null>(null);
+  const [detailInvoices, setDetailInvoices] = useState<Invoice[]>([]);
   const [uploadOpen, setUploadOpen] = useState(false);
+  const [invoiceUploadOpen, setInvoiceUploadOpen] = useState(false);
 
   const suppliersById = useMemo(
     () => new Map(suppliers.map((s) => [s.id, s.name])),
@@ -126,6 +131,19 @@ export function DeliveryNotesPage() {
   const resolveSupplierName = (supplierId: string) =>
     suppliersById.get(supplierId) ?? supplierId.slice(0, 8) + '…';
 
+  const openDetailNote = async (note: DeliveryNote) => {
+    try {
+      const { data } = await apiClient.get<{ deliveryNote: DeliveryNote; invoices: Invoice[] }>(
+        `/api/delivery-notes/${note.id}`,
+      );
+      setDetailNote(data.deliveryNote);
+      setDetailInvoices(data.invoices ?? []);
+    } catch {
+      setDetailNote(note);
+      setDetailInvoices([]);
+    }
+  };
+
   const handleDownload = async (note: DeliveryNote, e: React.MouseEvent) => {
     e.stopPropagation();
     if (!note.originalFilename) {
@@ -142,7 +160,7 @@ export function DeliveryNotesPage() {
   const handleRowClick = (note: DeliveryNote) => {
     if (isSupplierPortalUser) {
       if (note.status === 'verified' || note.status === 'disputed') {
-        setDetailNote(note);
+        void openDetailNote(note);
       }
       return;
     }
@@ -230,7 +248,7 @@ export function DeliveryNotesPage() {
                           className="btn btn--ghost btn--sm"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setDetailNote(note);
+                            void openDetailNote(note);
                           }}
                         >
                           <Eye size={14} />
@@ -262,7 +280,13 @@ export function DeliveryNotesPage() {
           purchaseOrderNumber={
             detailNote?.purchaseOrderId ? poById.get(detailNote.purchaseOrderId) ?? null : null
           }
-          onClose={() => setDetailNote(null)}
+          invoices={detailInvoices}
+          canSubmitInvoice={canSubmitInvoice}
+          onSendInvoice={() => setInvoiceUploadOpen(true)}
+          onClose={() => {
+            setDetailNote(null);
+            setDetailInvoices([]);
+          }}
         />
 
         <UploadDeliveryNoteModal
@@ -270,6 +294,18 @@ export function DeliveryNotesPage() {
           onClose={() => setUploadOpen(false)}
           onSuccess={() => {
             setUploadOpen(false);
+            fetchData();
+          }}
+        />
+
+        <UploadInvoiceModal
+          isOpen={invoiceUploadOpen}
+          deliveryNote={detailNote}
+          isResend={detailInvoices.some((i) => i.status === 'disputed')}
+          onClose={() => setInvoiceUploadOpen(false)}
+          onSuccess={() => {
+            setInvoiceUploadOpen(false);
+            if (detailNote) void openDetailNote(detailNote);
             fetchData();
           }}
         />

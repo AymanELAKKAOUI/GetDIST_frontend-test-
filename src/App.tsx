@@ -30,6 +30,10 @@ import { DeliveryNotesPage } from './components/deliveryNotes/DeliveryNotesPage'
 
 import { DeliveryNoteReviewPage } from './components/deliveryNotes/DeliveryNoteReviewPage';
 
+import { InvoicesPage } from './components/invoices/InvoicesPage';
+
+import { InvoiceReviewPage } from './components/invoices/InvoiceReviewPage';
+
 import './App.css';
 
 
@@ -111,6 +115,18 @@ export default function App() {
                 <Route element={<PermissionRoute requiredPermissions="delivery_note.respond" />}>
 
                   <Route path="/delivery-notes/:id" element={<DeliveryNoteReviewPage />} />
+
+                </Route>
+
+                <Route element={<PermissionRoute requiredPermissions="invoice.view" />}>
+
+                  <Route path="/invoices" element={<InvoicesPage />} />
+
+                </Route>
+
+                <Route element={<PermissionRoute requiredPermissions="invoice.respond" />}>
+
+                  <Route path="/invoices/:id" element={<InvoiceReviewPage />} />
 
                 </Route>
 

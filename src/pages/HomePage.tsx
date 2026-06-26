@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Building2, ClipboardList, Package, Shield, UserCircle, Users } from 'lucide-react';
+import { Building2, ClipboardList, FileText, Package, Shield, UserCircle, Users } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import './HomePage.css';
 
@@ -67,6 +67,18 @@ export function HomePage() {
         : 'Review and verify delivery notes',
       to: '/delivery-notes',
       icon: <ClipboardList size={20} />,
+    });
+  }
+
+  if (hasPermission('invoice.view')) {
+    links.push({
+      id: 'home-link-invoices',
+      label: 'Invoices',
+      description: isSupplierPortalUser
+        ? 'Upload and track invoice PDFs'
+        : 'Review and verify received invoices',
+      to: '/invoices',
+      icon: <FileText size={20} />,
     });
   }
 

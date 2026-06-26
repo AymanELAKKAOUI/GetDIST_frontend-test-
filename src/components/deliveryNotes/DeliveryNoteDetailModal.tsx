@@ -1,3 +1,10 @@
+import { Link } from 'react-router-dom';
+import { FileUp } from 'lucide-react';
+import {
+  findActiveInvoice,
+  findRejectedInvoice,
+  type Invoice,
+} from '../../types/invoice';
 import { Modal } from '../ui/Modal';
 import { DeliveryNoteStatusBadge } from './DeliveryNoteStatusBadge';
 import {
@@ -6,12 +13,16 @@ import {
   type DeliveryNote,
 } from '../../types/deliveryNote';
 import './DeliveryNotes.css';
+import '../invoices/Invoices.css';
 
 interface DeliveryNoteDetailModalProps {
   isOpen: boolean;
   note: DeliveryNote | null;
   supplierName: string;
   purchaseOrderNumber: string | null;
+  invoices?: Invoice[];
+  canSubmitInvoice?: boolean;
+  onSendInvoice?: () => void;
   onClose: () => void;
 }
 
@@ -20,11 +31,19 @@ export function DeliveryNoteDetailModal({
   note,
   supplierName,
   purchaseOrderNumber,
+  invoices = [],
+  canSubmitInvoice = false,
+  onSendInvoice,
   onClose,
 }: DeliveryNoteDetailModalProps) {
   if (!note) return null;
 
   const sections = normalizeSections(note.lineItems);
+  const activeInvoice = findActiveInvoice(invoices);
+  const rejectedInvoice = findRejectedInvoice(invoices);
+  const showInvoiceUpload =
+    note.status === 'verified' && canSubmitInvoice && !activeInvoice && onSendInvoice;
+  const showInvoiceSentLink = note.status === 'verified' && !!activeInvoice;
 
   return (
     <Modal id="delivery-note-detail-modal" title="Delivery Note Details" isOpen={isOpen} onClose={onClose} maxWidth={640}>
@@ -86,6 +105,27 @@ export function DeliveryNoteDetailModal({
             </table>
           </div>
         </>
+      )}
+
+      {(showInvoiceUpload || showInvoiceSentLink) && (
+        <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--border-soft)' }}>
+          {showInvoiceUpload && (
+            <button type="button" className="btn btn--sm" onClick={onSendInvoice}>
+              <FileUp size={16} />
+              {rejectedInvoice ? 'Re-send Invoice' : 'Send Invoice'}
+            </button>
+          )}
+          {showInvoiceSentLink && activeInvoice && (
+            <Link
+              to="/invoices"
+              state={{ openInvoiceId: activeInvoice.id }}
+              className="inv-sent-link"
+              onClick={onClose}
+            >
+              Invoice Sent (View)
+            </Link>
+          )}
+        </div>
       )}
 
       <div className="modal__footer" style={{ paddingTop: 16, borderTop: '1px solid var(--border-soft)' }}>

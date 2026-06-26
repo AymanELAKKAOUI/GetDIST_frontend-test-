@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Building2, ChevronUp, ClipboardList, Home, LogOut, Package, Shield, UserCircle, Users } from 'lucide-react';
+import { Building2, ChevronUp, ClipboardList, FileText, Home, LogOut, Package, Shield, UserCircle, Users } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import './Sidebar.css';
 
@@ -30,6 +30,7 @@ export function Sidebar() {
     'purchase_order.respond',
   ]);
   const showDeliveryNotes = hasPermission('delivery_note.view');
+  const showInvoices = hasPermission('invoice.view');
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -116,6 +117,16 @@ export function Sidebar() {
           >
             <ClipboardList size={18} />
             <span>Delivery Notes</span>
+          </NavLink>
+        )}
+        {showInvoices && (
+          <NavLink
+            to="/invoices"
+            className={({ isActive }) => `sidebar__item ${isActive ? 'sidebar__item--active' : ''}`}
+            id="nav-invoices"
+          >
+            <FileText size={18} />
+            <span>Invoices</span>
           </NavLink>
         )}
       </nav>
