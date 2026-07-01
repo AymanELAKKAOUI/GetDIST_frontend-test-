@@ -4,6 +4,7 @@ import { Building2, CalendarDays, ClipboardList, CreditCard, FileText, Landmark,
 import { apiClient } from '../api/client';
 import { Spinner } from '../components/ui/Spinner';
 import { useAuth } from '../context/AuthContext';
+import { PaymentTrackingDashboard } from '../components/home/PaymentTrackingDashboard';
 import { fetchAllInvoices, formatMoney, type Invoice } from '../types/invoice';
 import './HomePage.css';
 
@@ -191,6 +192,14 @@ export function HomePage() {
           Overview of your submitted invoices with the company.
         </p>
         <SupplierHomeTotal />
+      </div>
+    );
+  }
+
+  if (hasPermission('payment.view')) {
+    return (
+      <div className="home-page" id="home-page">
+        <PaymentTrackingDashboard />
       </div>
     );
   }

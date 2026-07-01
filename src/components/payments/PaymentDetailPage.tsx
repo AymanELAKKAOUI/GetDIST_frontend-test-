@@ -10,10 +10,14 @@ import {
   getCheckProposalItems,
   getRescheduleValues,
   markPaymentPaid,
+  parseDailyPayoutLimitError,
   rejectApprovalRequest,
   updatePaymentDraft,
 } from '../../api/payments';
+import { fetchActivePolicy } from '../../api/policies';
 import { fetchCompanyDisplayName } from '../../api/company';
+import { PaymentRescheduleModal } from '../PaymentRescheduleModal';
+import type { DailyPayoutLimitErrorDetails } from '../../types/paymentEvaluate';
 import { useAuth } from '../../context/AuthContext';
 import type { Supplier } from '../../types/supplier';
 import type { Invoice } from '../../types/invoice';
@@ -222,6 +226,8 @@ export function PaymentDetailPage() {
   const [confirmMarkPaid, setConfirmMarkPaid] = useState(false);
   const [approveTarget, setApproveTarget] = useState<string | null>(null);
   const [rejectTarget, setRejectTarget] = useState<string | null>(null);
+  const [limitError, setLimitError] = useState<DailyPayoutLimitErrorDetails | null>(null);
+  const [checkIntervalDays, setCheckIntervalDays] = useState(2);
 
   const loadDetail = useCallback(async () => {
     if (!id) return;
@@ -280,6 +286,17 @@ export function PaymentDetailPage() {
     loadDetail();
   }, [loadDetail]);
 
+  useEffect(() => {
+    if (isSupplierPortalUser) return;
+    fetchActivePolicy()
+      .then((policy) => {
+        if (policy?.checkIntervalDays != null) {
+          setCheckIntervalDays(policy.checkIntervalDays);
+        }
+      })
+      .catch(() => undefined);
+  }, [isSupplierPortalUser]);
+
   const isDraft = payment?.status === 'draft';
   const isPending = payment?.status === 'pending_validation';
   const isScheduled = payment?.status === 'scheduled';
@@ -333,8 +350,14 @@ export function PaymentDetailPage() {
     try {
       await evaluatePayment(id);
       showToast('Payment evaluated.');
+      setLimitError(null);
       await loadDetail();
     } catch (err) {
+      const payoutLimitError = parseDailyPayoutLimitError(err);
+      if (payoutLimitError) {
+        setLimitError(payoutLimitError.details);
+        return;
+      }
       showToast(getApiErrorMessage(err, 'Failed to evaluate payment.'), 'error');
     } finally {
       setActionLoading(false);
@@ -709,6 +732,20 @@ export function PaymentDetailPage() {
         onClose={() => setRejectTarget(null)}
         onConfirm={handleReject}
       />
+
+      {payment && limitError && id && (
+        <PaymentRescheduleModal
+          isOpen
+          paymentId={id}
+          currency={payment.currency}
+          scheduledDate={payment.scheduledDate}
+          dueDate={payment.dueDate}
+          checkIntervalDays={checkIntervalDays}
+          limitError={limitError}
+          onClose={() => setLimitError(null)}
+          onSuccess={loadDetail}
+        />
+      )}
     </div>
   );
 }

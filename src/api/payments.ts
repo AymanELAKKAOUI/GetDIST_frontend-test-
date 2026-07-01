@@ -1,4 +1,7 @@
 import { apiClient } from './client';
+import type { EvaluateCheckProposal } from '../types/paymentEvaluate';
+import { isDailyPayoutLimitError, type DailyPayoutLimitError } from '../types/paymentEvaluate';
+import axios from 'axios';
 import type {
   ApprovalRequest,
   ApprovalRequestItem,
@@ -145,8 +148,18 @@ export async function updatePaymentDraft(
   await apiClient.patch(`/api/payments/${paymentId}`, payload);
 }
 
-export async function evaluatePayment(paymentId: string): Promise<void> {
-  await apiClient.post(`/api/payments/${paymentId}/evaluate`);
+export async function evaluatePayment(
+  paymentId: string,
+  checkProposals?: EvaluateCheckProposal[],
+): Promise<void> {
+  await apiClient.post(`/api/payments/${paymentId}/evaluate`, checkProposals?.length ? { checkProposals } : {});
+}
+
+export function parseDailyPayoutLimitError(error: unknown): DailyPayoutLimitError | null {
+  if (!axios.isAxiosError(error)) return null;
+  const data = error.response?.data;
+  if (!isDailyPayoutLimitError(data)) return null;
+  return data;
 }
 
 export async function cancelPayment(paymentId: string): Promise<void> {

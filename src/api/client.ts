@@ -45,6 +45,9 @@ export interface ApiErrorBody {
 export function getApiErrorMessage(error: unknown, fallback = 'An unexpected error occurred.'): string {
   if (axios.isAxiosError(error)) {
     const data = error.response?.data as ApiErrorBody | undefined;
+    if (data?.error === 'DAILY_PAYOUT_LIMIT_EXCEEDED') {
+      return data.message ?? 'Daily payout limit exceeded on the proposed check date.';
+    }
     if (data?.error === 'INTERNAL_SERVER_ERROR') {
       return 'Server error while saving. If payment options are conflicting, uncheck either partial or full payment.';
     }

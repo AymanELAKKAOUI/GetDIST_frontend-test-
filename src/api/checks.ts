@@ -31,6 +31,8 @@ export function mapCheckRow(row: Record<string, unknown>): Check {
       row.actual_deposit_date != null || row.actualDepositDate != null
         ? String(row.actual_deposit_date ?? row.actualDepositDate).slice(0, 10)
         : null,
+    supplierName: row.supplier_name != null ? String(row.supplier_name) : row.supplierName != null ? String(row.supplierName) : undefined,
+    currency: row.currency != null ? String(row.currency) : undefined,
     createdAt: row.created_at != null ? String(row.created_at) : row.createdAt != null ? String(row.createdAt) : undefined,
     updatedAt: row.updated_at != null ? String(row.updated_at) : row.updatedAt != null ? String(row.updatedAt) : undefined,
   };
@@ -44,12 +46,13 @@ export function enrichChecks(
   return checks.map((check) => {
     const payment = paymentsById.get(check.paymentId);
     const supplierName =
+      check.supplierName ??
       payment?.supplierName ??
       (payment?.supplierId ? suppliersById.get(payment.supplierId) : undefined);
     return {
       ...check,
-      supplierName,
-      currency: payment?.currency ?? 'MAD',
+      supplierName: supplierName ?? undefined,
+      currency: check.currency ?? payment?.currency ?? 'MAD',
     };
   });
 }
@@ -73,34 +76,51 @@ export async function fetchCheckCalendar(dateFrom: string, dateTo: string): Prom
   const { data } = await apiClient.get<CheckCalendarResponse>('/api/checks/calendar', {
     params: { dateFrom, dateTo },
   });
-  return data;
+  return {
+    entries: data.entries ?? [],
+    entriesByIssueDate: data.entriesByIssueDate ?? [],
+    nonWorkingDays: data.nonWorkingDays ?? [],
+  };
+}
+
+export async function fetchDailyPayouts(dateFrom: string, dateTo: string) {
+  const { data } = await apiClient.get<{ payouts: import('../types/check').DailyPayoutSummary[] }>(
+    '/api/checks/daily-payouts',
+    { params: { dateFrom, dateTo } },
+  );
+  return data.payouts;
 }
 
 export async function fetchCheckDetail(checkId: string): Promise<CheckDetailResponse> {
-  const { data } = await apiClient.get<{ check: Record<string, unknown> }>(`/api/checks/${checkId}`);
+  const { data } = await apiClient.get<{
+    check: Record<string, unknown>;
+    payment?: Record<string, unknown>;
+  }>(`/api/checks/${checkId}`);
   const check = mapCheckRow(data.check);
 
-  try {
-    const paymentRes = await apiClient.get<{ payment: Record<string, unknown> }>(
-      `/api/payments/${check.paymentId}`,
-    );
-    const payment = mapPaymentRow(paymentRes.data.payment);
+  if (data.payment) {
+    const row = data.payment;
     return {
       check,
       payment: {
-        id: payment.id,
-        supplierId: payment.supplierId,
-        supplierName: payment.supplierName,
-        amount: payment.amount,
-        currency: payment.currency,
-        dueDate: payment.dueDate,
-        status: payment.status,
-        paymentMethod: payment.paymentMethod,
+        id: String(row.id ?? check.paymentId),
+        supplierId: String(row.supplierId ?? row.supplier_id ?? ''),
+        supplierName:
+          row.supplierName != null
+            ? String(row.supplierName)
+            : row.supplier_name != null
+              ? String(row.supplier_name)
+              : check.supplierName ?? undefined,
+        amount: Number(row.amount ?? row.payment_amount),
+        currency: String(row.currency ?? check.currency ?? 'MAD'),
+        dueDate: String(row.dueDate ?? row.due_date ?? '').slice(0, 10),
+        status: String(row.status ?? row.payment_status),
+        paymentMethod: String(row.paymentMethod ?? row.payment_method),
       },
     };
-  } catch {
-    return { check };
   }
+
+  return { check };
 }
 
 export async function issueCheck(checkId: string, checkNumber?: string): Promise<Check> {

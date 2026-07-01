@@ -11,6 +11,8 @@ export interface Check {
   status: CheckStatus;
   agreedDepositDate: string | null;
   actualDepositDate: string | null;
+  supplierName?: string | null;
+  currency?: string | null;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -44,7 +46,15 @@ export interface NonWorkingDay {
 
 export interface CheckCalendarResponse {
   entries: CheckCalendarEntry[];
+  entriesByIssueDate: IssueDateEntry[];
   nonWorkingDays: NonWorkingDay[];
+}
+
+export interface DailyPayoutSummary {
+  date: string;
+  totalAmount: number;
+  limit: number;
+  percentUsed: number;
 }
 
 export interface IssueDateEntry {
@@ -158,6 +168,28 @@ export function issueDateTotalForLimit(
     .filter((check) => check.status !== 'cancelled')
     .reduce((sum, check) => sum + check.amount, 0);
 }
+
+export function splitSequenceLabel(
+  paymentId: string,
+  checkId: string,
+  checks: CalendarCheckItem[],
+): string | null {
+  const samePayment = checks
+    .filter((check) => check.paymentId === paymentId)
+    .sort((a, b) => a.issueDate.localeCompare(b.issueDate) || a.id.localeCompare(b.id));
+  if (samePayment.length <= 1) return null;
+  const index = samePayment.findIndex((check) => check.id === checkId);
+  if (index < 0) return null;
+  return `Check ${index + 1} of ${samePayment.length}`;
+}
+
+export const CHECK_STATUS_DOT_CLASS: Record<string, string> = {
+  planned: 'check-cal-dot--planned',
+  issued: 'check-cal-dot--issued',
+  received: 'check-cal-dot--received',
+  cleared: 'check-cal-dot--cleared',
+  cancelled: 'check-cal-dot--cancelled',
+};
 
 export async function fetchAllChecks(
   fetchPage: (offset: number, limit: number) => Promise<Check[]>,

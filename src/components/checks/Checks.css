@@ -175,7 +175,7 @@
 
 .check-calendar-cell {
   position: relative;
-  min-height: 110px;
+  min-height: 118px;
   padding: 10px;
   border: 1px solid var(--border-soft);
   background: #171717;
@@ -329,6 +329,235 @@
 
 .check-calendar-drawer__item-meta {
   font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.check-calendar-drawer__split-badge {
+  margin-top: 8px;
+  display: inline-flex;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(255, 107, 0, 0.15);
+  color: var(--accent);
+}
+
+.check-calendar-cell__dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-height: 10px;
+}
+
+.check-cal-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.check-cal-dot--planned {
+  background: #60a5fa;
+}
+
+.check-cal-dot--issued {
+  background: #fbbf24;
+}
+
+.check-cal-dot--received {
+  background: #facc15;
+}
+
+.check-cal-dot--cleared {
+  background: #4ade80;
+}
+
+.check-cal-dot--cancelled {
+  background: #f87171;
+}
+
+.check-cal-util {
+  margin-top: auto;
+  height: 4px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.check-cal-util__fill {
+  height: 100%;
+  border-radius: 999px;
+  max-width: 100%;
+}
+
+.check-cal-util__fill.check-cal-util--ok {
+  background: #22c55e;
+}
+
+.check-cal-util__fill.check-cal-util--warn {
+  background: #facc15;
+}
+
+.check-cal-util__fill.check-cal-util--over {
+  background: #ef4444;
+  animation: check-cal-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes check-cal-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.pay-reschedule__intro {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0 0 16px;
+  line-height: 1.5;
+}
+
+.pay-reschedule-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.pay-reschedule-stats__label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.pay-reschedule-bar {
+  position: relative;
+  height: 10px;
+  background: var(--bg-panel);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--border-soft);
+}
+
+.pay-reschedule-bar__fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.pay-reschedule-bar__fill--ok {
+  background: #22c55e;
+}
+
+.pay-reschedule-bar__fill--warn {
+  background: #facc15;
+}
+
+.pay-reschedule-bar__fill--over {
+  background: #ef4444;
+}
+
+.pay-reschedule-bar__caption {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.pay-reschedule-splits {
+  margin-top: 18px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.pay-reschedule-splits__title {
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.pay-reschedule-split {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.pay-reschedule-split:last-child {
+  border-bottom: none;
+}
+
+.pay-reschedule-split--conflict {
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.pay-reschedule-split__badge {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #f87171;
+}
+
+.pay-reschedule-suggestions {
+  margin-top: 18px;
+}
+
+.pay-reschedule-suggestions__title {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.pay-reschedule-suggestions__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pay-reschedule-suggestions__empty {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.pay-reschedule-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-panel);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.pay-reschedule-chip:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.pay-reschedule-chip__meta {
+  font-size: 11px;
+  font-weight: 500;
   color: var(--text-secondary);
 }
 
